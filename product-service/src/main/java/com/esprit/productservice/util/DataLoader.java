@@ -1,7 +1,7 @@
 package com.esprit.productservice.util;
 
 import com.esprit.productservice.model.Product;
-import com.esprit.productservice.repository.ProductRepository;
+//import com.esprit.productservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -12,17 +12,17 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class DataLoader implements CommandLineRunner {
 
-    private final ProductRepository productRepository;
+    //private final ProductRepository productRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        if (productRepository.count() < 1) {
+       // if (productRepository.count() < 1) {
             Product product = new Product();
             product.setName("iPhone 13");
             product.setDescription("iPhone 13");
             product.setPrice(BigDecimal.valueOf(1000));
 
-            productRepository.save(product);
+        //    productRepository.save(product);
         }
-    }
+   // }
 }
