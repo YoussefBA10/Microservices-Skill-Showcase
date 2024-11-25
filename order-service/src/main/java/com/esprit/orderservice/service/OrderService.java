@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -46,24 +47,32 @@ public class OrderService {
         List<String> skuCodes = order.getOrderLineItemsList().stream()
                 .map(OrderLineItems::getSkuCode)
                 .toList();
-        order.setOrderLineItemsList(orderLineItems);
-        orderRepository.save(order);
-        return "Added";
+        order.setPrice(orderLineItems.stream()
+                .map(OrderLineItems::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
+
         // Call Inventory Service, and place order if product is in
         // stock
-       /* Observation inventoryServiceObservation = Observation.createNotStarted("inventory-service-lookup",
+        Observation inventoryServiceObservation = Observation.createNotStarted("inventory-service-lookup",
                 this.observationRegistry);
         inventoryServiceObservation.lowCardinalityKeyValue("call", "inventory-service");
         return inventoryServiceObservation.observe(() -> {
             InventoryResponse[] inventoryResponseArray = webClientBuilder.build().get()
-                    .uri("http://inventory-service/api/inventory",
+                    .uri("http://localhost:8083/api/v1/inventory",
                             uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
                     .retrieve()
                     .bodyToMono(InventoryResponse[].class)
                     .block();
+            Arrays.stream(inventoryResponseArray).forEach(System.out::println);
+            boolean allProductsInStock = false;
+            if (inventoryResponseArray.length>0) {
+                 allProductsInStock = Arrays.stream(inventoryResponseArray)
+                        .allMatch(inventoryResponse -> orderLineItems.stream()
+                                .allMatch(orderLine -> orderLine.getSkuCode().equals(inventoryResponse.getSkuCode())
+                                        && inventoryResponse.isInStock()));
 
-            boolean allProductsInStock = Arrays.stream(inventoryResponseArray)
-                    .allMatch(InventoryResponse::isInStock);
+                System.out.println("allProductsInStock: " + allProductsInStock);
+            }
 
             if (allProductsInStock) {
                 orderRepository.save(order);
@@ -74,7 +83,7 @@ public class OrderService {
                 throw new IllegalArgumentException("Product is not in stock, please try again later");
             }
         });
-*/
+
     }
 
     private OrderLineItems mapToDto(OrderLineItemsDto orderLineItemsDto) {

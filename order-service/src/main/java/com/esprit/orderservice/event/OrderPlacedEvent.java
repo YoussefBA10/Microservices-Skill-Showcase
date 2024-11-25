@@ -1,9 +1,12 @@
 package com.esprit.orderservice.event;
 
 
+import com.esprit.orderservice.model.OrderLineItems;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.ApplicationEvent;
+
+import java.util.List;
 
 
 @Getter
