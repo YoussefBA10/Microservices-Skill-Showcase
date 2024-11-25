@@ -7,6 +7,7 @@ import com.esprit.security.Repository.UserRepo;
 import com.esprit.security.Service.EmailTemplateName;
 import com.esprit.security.Service.UserService;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -31,7 +32,6 @@ public class UserController {
     public ResponseEntity<?> register(@RequestBody @Valid UserRegisterForm request) throws MessagingException {
         return ResponseEntity.ok(userService.register(request));
     }
-    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid UserLoginForm request){
         if (request == null ) return ResponseEntity.badRequest().body("Form null");

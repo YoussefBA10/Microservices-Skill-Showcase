@@ -1,6 +1,6 @@
 package com.esprit.orderservice.service;
 
-
+import org.springframework.security.core.Authentication;
 import com.esprit.orderservice.dto.InventoryResponse;
 import com.esprit.orderservice.dto.OrderLineItemsDto;
 import com.esprit.orderservice.dto.OrderRequest;
@@ -13,6 +13,7 @@ import io.micrometer.observation.ObservationRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -75,6 +76,13 @@ public class OrderService {
             }
 
             if (allProductsInStock) {
+                String token = webClientBuilder.build().get()
+                        .uri("http://localhost:8084/api/v1/auth/requestToken")
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block();
+                //get the logged user after validate the order
+                System.out.println(token);
                 orderRepository.save(order);
                 // publish Order Placed Event
                 applicationEventPublisher.publishEvent(new OrderPlacedEvent(this, order.getOrderNumber()));

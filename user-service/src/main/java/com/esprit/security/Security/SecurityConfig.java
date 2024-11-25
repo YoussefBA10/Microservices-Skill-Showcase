@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .cors(cors -> cors
                         .configurationSource(request -> {
                             CorsConfiguration config = new CorsConfiguration();
-                            config.setAllowedOrigins(Arrays.asList("http://localhost","http://"+frontendurl));
+                            config.setAllowedOrigins(Arrays.asList("http://localhost"));
                             config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
                             config.setAllowedHeaders(Arrays.asList("*"));
                             config.setAllowCredentials(true);
@@ -51,8 +51,6 @@ public class SecurityConfig {
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("api/v1/auth/activate-account")
-                        .permitAll()
                         .requestMatchers("api/v1/auth/**")
                         .permitAll()
                         .anyRequest()
