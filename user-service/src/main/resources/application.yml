@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: User Service
+  config:
+    import: optional::configserver:http://localhost:8888
+server:
+  servlet:
+    context-path: /api/v1
+  port: 8084
+

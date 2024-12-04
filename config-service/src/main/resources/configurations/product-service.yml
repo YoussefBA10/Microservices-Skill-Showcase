@@ -1,0 +1,16 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: product-service
+    redis:
+      host: localhost
+      port: 6379
+  elasticsearch:
+    uris: http://localhost:9200
+    username: elastic
+    password: 786919
+    connection-timeout: 5000

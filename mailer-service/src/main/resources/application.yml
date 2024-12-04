@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: mailer-service
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/4twin_semestre1
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:}
+    hikari:
+      connection-timeout: 20000
+  config:
+    import: optional:configserver:http://localhost:8888
+server:
+  servlet:
+    context-path: /api/v1
+  port: 8085
+
