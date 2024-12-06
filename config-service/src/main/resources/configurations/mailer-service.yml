@@ -12,6 +12,7 @@ spring:
     jwt:
       secret-key: ${JWT_SECRET_KEY:eyJhbGciOiJIUzI1NiJ9eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcyNzQzOTg5NiwiaWF0IjoxNzI3NDM5ODk2fQw8WJR8e2efdua9k3CTMDkijVuLoTdMSgHRM3DleeiPo}
       expiration: 864000
+applciation:
   mailing:
     frontend:
       activation_url: http://${FRONTEND_ACTIVATION_URL_HOST:localhost}:${FRONTEND_ACTIVATION_URL_PORT:80}/activate-account
