@@ -14,3 +14,6 @@ spring:
     username: elastic
     password: 786919
     connection-timeout: 5000
+logging:
+  file:
+    name: classpath:/logs/elk-stack-user-service.log

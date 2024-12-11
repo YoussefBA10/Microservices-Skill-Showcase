@@ -14,7 +14,7 @@ spring:
           predicates:
             - Path=/api/v1/inventory/**
         - id: mailer-service
-          uri: lb:http://MAILER
+          uri: lb:http://MAILER-SERVICE
           predicates:
             - Path=/api/v1/mailer/**
         - id: product-service
@@ -22,6 +22,14 @@ spring:
           predicates:
             - Path=/api/v1/product/**
         - id: user-service
-          uri: lb:http://USER SERVICE
+          uri: lb:http://USER-SERVICE
           predicates:
             - Path=/api/v1/user/**
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "gateway*, *"

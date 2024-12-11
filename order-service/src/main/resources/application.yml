@@ -1,13 +1,8 @@
 spring:
   application:
     name: order-service
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/order_service
-    username: root
-    password:
   config:
-      import: optional::configserver:http://localhost:8888
+    import: optional:configserver:http://localhost:8888
 server:
   port: 8082
   servlet:

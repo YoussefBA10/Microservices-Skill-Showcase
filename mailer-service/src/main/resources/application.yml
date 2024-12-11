@@ -1,17 +1,8 @@
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/4twin_semestre1
-    username: ${MYSQL_USERNAME:root}
-    password: ${MYSQL_PASSWORD:}
-    hikari:
-      connection-timeout: 20000
+  application:
+    name: mailer-service
   config:
     import: optional:configserver:http://localhost:8888
-application:
-  mailing:
-    frontend:
-      activation_url: http://${FRONTEND_ACTIVATION_URL_HOST:localhost}:${FRONTEND_ACTIVATION_URL_PORT:80}/activate-account
 server:
   servlet:
     context-path: /api/v1
