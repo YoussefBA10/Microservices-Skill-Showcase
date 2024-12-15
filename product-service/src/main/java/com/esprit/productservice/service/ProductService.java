@@ -9,6 +9,9 @@ import com.esprit.productservice.repository.ProductESRepository;
 import com.esprit.productservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
@@ -23,18 +26,19 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductESRepository productElasticRepository;
     @Autowired
     private CacheManager cacheManager;
+    Logger logger =  LoggerFactory.getLogger(ProductService.class);
     @CacheEvict(value = "productsCache", allEntries = true)
     public void createProduct(ProductRequest productRequest) {
         Product product = Product.builder()
@@ -42,20 +46,24 @@ public class ProductService {
                 .description(productRequest.getDescription())
                 .price(productRequest.getPrice())
                 .build();
+
+        logger.info("Product Created {}: " , product);
         productRepository.save(product);
     }
 
-    @Cacheable(value = "productsCache",key = "#root.methodName")
+   // @Cacheable(value = "productsCache",key = "#root.methodName")
     public List<ProductResponse> getAllProducts() {
         List<ProductResponse> productResponses = new ArrayList<>();
         Pageable pageable = PageRequest.of(3,10);
         Iterable<ProductES> productsES = productElasticRepository.findAll(pageable);
         Cache cache = cacheManager.getCache("productsCache");
-        System.out.println("Cache not found: " + cache);
+     //   System.out.println("Cache not found: " + cache);
         //productResponses.addAll(products.stream().map(this::mapToProductResponse).toList());
         productResponses.addAll(StreamSupport.stream(productsES.spliterator(),false)
                 .map(this::mapToProductResponse)
                 .toList());
+        logger.info("ProductES Created {}: " , productResponses);
+        logger.info("ProductMongo Created {}: " , productRepository.findAll());
         return productResponses;
     }
 
