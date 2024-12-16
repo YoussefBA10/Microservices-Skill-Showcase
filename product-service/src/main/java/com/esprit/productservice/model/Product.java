@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Data
 @Getter
 @Setter
-public class Product  {
+public class Product {
 
     @Id
     private String id;

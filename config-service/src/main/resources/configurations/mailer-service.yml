@@ -18,6 +18,13 @@ application:
       activation_url: http://${FRONTEND_ACTIVATION_URL_HOST:localhost}:${FRONTEND_ACTIVATION_URL_PORT:80}/activate-account
   datasource.hikari:
     connection-timeout: 20000
+  flyway:
+    baseline-on-migrate: true
+    baseline-description: "init"
+    baseline-version: 0
+    enabled: true
+    user: root
+    password:
 logging:
   level:
     root: DEBUG

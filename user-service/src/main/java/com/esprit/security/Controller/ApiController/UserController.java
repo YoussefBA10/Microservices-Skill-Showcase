@@ -7,17 +7,12 @@ import com.esprit.security.Repository.UserRepo;
 import com.esprit.security.Service.EmailTemplateName;
 import com.esprit.security.Service.UserService;
 import jakarta.mail.MessagingException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.attribute.standard.Media;
 import java.time.LocalDateTime;
 
 
@@ -60,7 +55,7 @@ public class UserController {
         return ResponseEntity.ok(userService.editUser(userRegisterForm));
     }
     @PostMapping("/sendmail")
-    public ResponseEntity<?> demo(@RequestBody @Valid Mail mail) {
+    public ResponseEntity<?> demo(@RequestBody @Valid MailDTO mail) {
         try {
             mail.setStatus(Status.SENT);
             mail.setEmailTemplateName(EmailTemplateName.ACTIVATE_ACCOUNT);

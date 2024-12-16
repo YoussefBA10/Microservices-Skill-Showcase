@@ -9,5 +9,5 @@ import lombok.*;
 @NoArgsConstructor
 public class Request {
     private User user;
-    private Mail mail;
+    private MailDTO mail;
 }
