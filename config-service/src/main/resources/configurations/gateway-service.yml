@@ -1,4 +1,11 @@
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "http://localhost:8080/realms/micro-services"
+  main:
+    web-application-type: reactive
   cloud:
     gateway:
       discovery:
