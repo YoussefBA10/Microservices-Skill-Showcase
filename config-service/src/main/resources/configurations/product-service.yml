@@ -14,3 +14,18 @@ spring:
     username: elastic
     password: 786919
     connection-timeout: 5000
+resilience4j:
+  configs:
+    default:
+      registerHealthIndicator: true
+      slidingWindowType: COUNT_BASED
+      slidingWindowSize: 10
+      failureRateThreshold: 50
+      waitDurationInOpenState: 5s
+      permittedNumberOfCallsInHalfOpenState: 3
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 3s
+

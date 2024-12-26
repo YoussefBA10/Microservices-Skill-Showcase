@@ -32,3 +32,20 @@ logging:
     root: DEBUG
     org.springframework.security: DEBUG
     com.fasterxml.jackson: DEBUG
+resilience4j:
+  configs:
+    default:
+      registerHealthIndicator: true
+      slidingWindowType: COUNT_BASED
+      slidingWindowSize: 10
+      failureRateThreshold: 50
+      waitDurationInOpenState: 5s
+      permittedNumberOfCallsInHalfOpenState: 3
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+  instances:
+    mail-service:
+      baseConfig: default
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 3s

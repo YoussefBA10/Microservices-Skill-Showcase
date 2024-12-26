@@ -7,7 +7,9 @@ import com.esprit.security.Repository.RoleRepo;
 import com.esprit.security.Repository.TokenRepo;
 import com.esprit.security.Security.JwtService;
 import com.esprit.security.Repository.UserRepo;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.mail.MessagingException;
+import jakarta.persistence.Column;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,8 @@ public class UserService {
     private String mailerapi;
     @Autowired
     private RestTemplate restTemplate;
+
+
     public User register(UserRegisterForm form) throws MessagingException {
         var userRole = roleRepo.findByName("USER")
                 //todo better exeption handler
@@ -190,12 +194,19 @@ public class UserService {
         SecurityContextHolder.clearContext();
         return null;
     }
-    @Async
+    //@Async
+    @CircuitBreaker(name="mail-service",fallbackMethod = "mailFallBack")
     public void MailerRequest(MailDTO mail){
         mail.setStatus(Status.SENT);
         mail.setEmailTemplateName(ACTIVATE_ACCOUNT);
         mail.setSentDate(LocalDateTime.now());
         ResponseEntity<String> response = restTemplate.postForEntity(mailerapi, mail, String.class);
         response.getBody();
+    }
+    public User mailFallBack(MailDTO mail, Throwable throwable){
+        System.err.println("Mailer service is down or not reachable. Error: " + throwable.getMessage());
+        mail.setStatus(Status.FAILED);
+        mail.setSentDate(LocalDateTime.now());
+        return null;
     }
 }
