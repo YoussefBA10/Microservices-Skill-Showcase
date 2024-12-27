@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/4twin_semestre1
+    url: jdbc:mysql://localhost:3306/mailer-service
     username: root
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,6 +12,24 @@ spring:
     jwt:
       secret-key: ${JWT_SECRET_KEY:eyJhbGciOiJIUzI1NiJ9eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcyNzQzOTg5NiwiaWF0IjoxNzI3NDM5ODk2fQw8WJR8e2efdua9k3CTMDkijVuLoTdMSgHRM3DleeiPo}
       expiration: 864000
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    connection-timeout: 60000
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 1000
+          multiplier: 2.0
+          max-interval: 10000
+  mail:
+    queue: mailer-queue
+    exchange: mailer-exchange
+    routing-key: mailer-routing-key
 application:
   mailing:
     frontend:

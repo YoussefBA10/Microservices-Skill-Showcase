@@ -23,13 +23,17 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
 public class User{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String firstname;
     private String lastname;
     private String username;
     private String email;
     private String password;
+    @OneToMany
     private List<Role> roles;
     private boolean accoutlocked;
     private boolean accountenable;

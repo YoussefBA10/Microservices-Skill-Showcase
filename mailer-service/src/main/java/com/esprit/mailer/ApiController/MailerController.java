@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("mailer")
 @RequiredArgsConstructor
-public class UserController {
+public class MailerController {
     private final MailRepo mailRepo;
     private final UserRepo userRepo;
     private final EmailService emailService;
