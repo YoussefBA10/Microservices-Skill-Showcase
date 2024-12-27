@@ -7,6 +7,7 @@ import com.esprit.productservice.model.Product;
 import com.esprit.productservice.repository.ProductESRepository;
 
 import com.esprit.productservice.repository.ProductRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -24,6 +25,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +55,7 @@ public class ProductService {
     }
 
    // @Cacheable(value = "productsCache",key = "#root.methodName")
+    @CircuitBreaker(name="product-service", fallbackMethod = "fallBackMethode")
     public List<ProductResponse> getAllProducts() {
         List<ProductResponse> productResponses = new ArrayList<>();
         Pageable pageable = PageRequest.of(3,10);
@@ -65,6 +69,10 @@ public class ProductService {
         logger.info("ProductES Created {}: " , productResponses);
         logger.info("ProductMongo Created {}: " , productRepository.findAll());
         return productResponses;
+    }
+    public List<ProductResponse> fallBackMethode(Throwable throwable){
+        System.err.println("Mailer service is down or not reachable. Error: " + throwable.getMessage());
+        return List.of(new ProductResponse("Unavailable", "Service Unavailable","Service is down", null));
     }
 
     private ProductResponse mapToProductResponse(Product product) {

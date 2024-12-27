@@ -30,6 +30,9 @@ resilience4j:
       waitDurationInOpenState: 5s
       permittedNumberOfCallsInHalfOpenState: 3
       automaticTransitionFromOpenToHalfOpenEnabled: true
+  instances:
+    inventory-service:
+      baseConfig: default
   timelimiter:
     configs:
       default:

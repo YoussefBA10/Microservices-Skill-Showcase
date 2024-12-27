@@ -1,5 +1,6 @@
 package com.esprit.orderservice.service;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.security.core.Authentication;
 import com.esprit.orderservice.dto.InventoryResponse;
 import com.esprit.orderservice.dto.OrderLineItemsDto;
@@ -52,46 +53,36 @@ public class OrderService {
                 .map(OrderLineItems::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
 
-        // Call Inventory Service, and place order if product is in
+        // call inventory Service, and place order if product is in
         // stock
-        Observation inventoryServiceObservation = Observation.createNotStarted("inventory-service-lookup",
-                this.observationRegistry);
-        inventoryServiceObservation.lowCardinalityKeyValue("call", "inventory-service");
-        return inventoryServiceObservation.observe(() -> {
-            InventoryResponse[] inventoryResponseArray = webClientBuilder.build().get()
-                    .uri("http://localhost:8083/api/v1/inventory",
-                            uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
-                    .retrieve()
-                    .bodyToMono(InventoryResponse[].class)
-                    .block();
-            Arrays.stream(inventoryResponseArray).forEach(System.out::println);
-            boolean allProductsInStock = false;
-            if (inventoryResponseArray.length>0) {
-                 allProductsInStock = Arrays.stream(inventoryResponseArray)
-                        .allMatch(inventoryResponse -> orderLineItems.stream()
-                                .allMatch(orderLine -> orderLine.getSkuCode().equals(inventoryResponse.getSkuCode())
-                                        && inventoryResponse.isInStock()));
 
-                System.out.println("allProductsInStock: " + allProductsInStock);
-            }
+        boolean allProductsInStock = checkInventory(skuCodes, orderLineItems);
 
-            if (allProductsInStock) {
-                String token = webClientBuilder.build().get()
-                        .uri("http://localhost:8084/api/v1/auth/requestToken")
-                        .retrieve()
-                        .bodyToMono(String.class)
-                        .block();
-                //get the logged user after validate the order
-                System.out.println(token);
-                orderRepository.save(order);
-                // publish Order Placed Event
-                applicationEventPublisher.publishEvent(new OrderPlacedEvent(this, order.getOrderNumber()));
-                return "Order Placed";
-            } else {
-                throw new IllegalArgumentException("Product is not in stock, please try again later");
-            }
-        });
+        if (allProductsInStock) {
+            orderRepository.save(order);
+            applicationEventPublisher.publishEvent(new OrderPlacedEvent(this, order.getOrderNumber()));
+            return "Order Placed";
+        } else {
+            throw new IllegalArgumentException("Product is not in stock, please try again later");
+        }
+    }
+    @CircuitBreaker(name = "inventory-service", fallbackMethod = "inventoryFallback")
+    private boolean checkInventory(List<String> skuCodes, List<OrderLineItems> orderLineItems) {
+        InventoryResponse[] inventoryResponseArray = webClientBuilder.build().get()
+                .uri("http://localhost:8083/api/v1/inventory",
+                        uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
+                .retrieve()
+                .bodyToMono(InventoryResponse[].class)
+                .block();
 
+        if (inventoryResponseArray == null || inventoryResponseArray.length == 0) {
+            return false;
+        }
+
+        return Arrays.stream(inventoryResponseArray)
+                .allMatch(inventoryResponse -> orderLineItems.stream()
+                        .allMatch(orderLine -> orderLine.getSkuCode().equals(inventoryResponse.getSkuCode())
+                                && inventoryResponse.isInStock()));
     }
 
     private OrderLineItems mapToDto(OrderLineItemsDto orderLineItemsDto) {
