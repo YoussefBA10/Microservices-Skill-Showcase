@@ -10,8 +10,8 @@ FROM openjdk:17-jdk-alpine
 
 WORKDIR /app
 
-COPY --from=build /app/target/mailer-service-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/inventory-service-0.0.1-SNAPSHOT.jar app.jar
 
-EXPOSE 8085
+EXPOSE 8083
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

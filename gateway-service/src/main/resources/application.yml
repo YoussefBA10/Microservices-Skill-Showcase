@@ -2,7 +2,7 @@ spring:
   application:
     name: gateway-service
   config:
-    import: optional:configserver:http://localhost:8888
+    import: optional:configserver:http://${Config-Server:localhost}:8888
 server:
   port: 8222
 

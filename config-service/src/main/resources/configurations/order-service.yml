@@ -3,19 +3,20 @@ spring:
     active: native
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/order_service
+    url: jdbc:mysql://localhost:3309/order-service
     username: root
-    password:
+    password: root
   jpa:
     hibernate:
       ddl-auto: update
   flyway:
+    url: jdbc:mysql://localhost:3309/order-service
     baseline-on-migrate: true
     baseline-description: "init"
     baseline-version: 0
     enabled: true
     user: root
-    password:
+    password: root
 server:
   port: 8082
   servlet:

@@ -1,20 +1,17 @@
-FROM openjdk:17-jdk-alpine AS build
+# Build stage
+FROM maven:3.9.4-eclipse-temurin-17 AS build
 
-ENV MYSQL_HOST=mysqldb
-ENV MYSQL_PORT=3306
-ENV MYSQL_USERNAME=root
-ENV MYSQL_PASSWORD=786919
-ENV BACKEND_MAILER_URL_HOST=localhost
-ENV BACKEND_MAILER_URL_PORT=8082
-ENV FRONTEND_ACTIVATION_URL_HOST=localhost
-ENV FRONTEND_ACTIVATION_URL_PORT=80
-ENV JWT_SECRET_KEY=eyJhbGciOiJIUzI1NiJ9eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcyNzQzOTg5NiwiaWF0IjoxNzI3NDM5ODk2fQw8WJR8e2efdua9k3CTMDkijVuLoTdMSgHRM3DleeiPo
-ENV SERVER_PORT=8081
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+FROM openjdk:17-jdk-alpine
+
 WORKDIR /app
 
-COPY target/Security-0.0.1-SNAPSHOT.jar /app/
+COPY --from=build /app/target/user-service-0.0.1-SNAPSHOT.jar app.jar
 
-ENTRYPOINT exec java -Dserver.port=$SERVER_PORT -jar /app/Security-0.0.1-SNAPSHOT.jar
+EXPOSE 8084
 
-EXPOSE 8081
-
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -1,14 +1,14 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/user-service
+    url: jdbc:mysql://localhost:3310/user-service
     username: root
-    password: 
+    password: root
     hikari:
       connection-timeout: 20000
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     database-platform: org.hibernate.dialect.MySQL8Dialect
 application:
   security:
@@ -26,7 +26,8 @@ application:
     baseline-version: 0
     enabled: true
     user: root
-    password:
+    password: root
+    url: jdbc:mysql://localhost:3310/user-service
 logging:
   level:
     root: DEBUG
