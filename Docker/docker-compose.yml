@@ -1,14 +1,14 @@
 services:
   config-service:
     container_name: config-service
-    image: config-service:latest
+    image: youssefbenarous247/config-service:latest
     ports:
       - "8888:8888"
     networks:
       - microservices-net
   discovery-service:
     container_name: discovery-service
-    image: discovery-service:latest
+    image: youssefbenarous247/discovery-service:latest
     environment:
       - Config-Server=config-service
     depends_on:
@@ -19,7 +19,7 @@ services:
       - microservices-net
   gateway-service:
     container_name: gateway-service
-    image: gateway-service:latest
+    image: youssefbenarous247/gateway-service:latest
     environment:
       - Config-Server=config-service
     depends_on:
@@ -30,7 +30,7 @@ services:
       - microservices-net
   inventory-service:
     container_name: inventory-service
-    image: inventory-service:latest
+    image: youssefbenarous247/inventory-service:latest
     environment:
       - Config-Server=config-service
     depends_on:
@@ -42,7 +42,7 @@ services:
       - microservices-net
   mailer-service:
     container_name: mailer-service
-    image: mailer-service:latest
+    image: youssefbenarous247/mailer-service:latest
     environment:
       - Config-Server=config-service
     depends_on:
@@ -54,7 +54,7 @@ services:
       - microservices-net
   order-service:
     container_name: order-service
-    image: order-service:latest
+    image: youssefbenarous247/order-service:latest
     environment:
       - Config-Server=config-service
     depends_on:
@@ -66,7 +66,7 @@ services:
       - microservices-net
   product-service:
     container_name: product-service
-    image: product-service:latest
+    image: youssefbenarous247/product-service:latest
     environment:
       - Config-Server=config-service
     depends_on:
@@ -80,7 +80,7 @@ services:
       - microservices-net
   user-service:
     container_name: user-service
-    image: user-service:latest
+    image: youssefbenarous247/user-service:latest
     environment:
       - Config-Server=config-service
     depends_on:
