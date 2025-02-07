@@ -2,11 +2,11 @@ spring:
   application:
     name: product-service
   config:
-    import: optional:configserver:http://${Config-Server:localhost}:8888
+    import: optional:configserver:http://${CONFIG_SERVER_HOST:localhost}:8888
 server:
-  port: 8081
+  port: 8082
   servlet:
     context-path: /api/v1
 logging:
   file:
-    name: C:\xampp\htdocs\ElasticStack-Redis-Spring-Project\config-service\logs\elk-stack-user-service.log
+    name: /var/log/product-service.log

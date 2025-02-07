@@ -1,7 +1,9 @@
 spring:
+  discovery:
+    enabled: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3310/user-service
+    url: jdbc:mysql://${USER_MYSQL:localhost}:${USER_MYSQL_PORT:3310}/user-service
     username: root
     password: root
     hikari:
@@ -27,7 +29,7 @@ application:
     enabled: true
     user: root
     password: root
-    url: jdbc:mysql://localhost:3310/user-service
+    url: jdbc:mysql://${USER_MYSQL:localhost}:${USER_MYSQL_PORT:3310}/user-service
 logging:
   level:
     root: DEBUG
@@ -50,3 +52,9 @@ resilience4j:
     configs:
       default:
         timeout-duration: 3s
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${DISCOVERY_SERVICE:http://localhost:8761/eureka/}
+  instance:
+    preferIpAddress: true

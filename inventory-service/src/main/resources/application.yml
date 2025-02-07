@@ -2,7 +2,7 @@
     application:
       name: inventory-service
     config:
-      import: optional:configserver:http://${Config-Server:localhost}:8888
+      import: optional:configserver:http://${CONFIG_SERVER_HOST:localhost}:8888
   server:
     port: 8083
     servlet:

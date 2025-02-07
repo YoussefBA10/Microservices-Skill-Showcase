@@ -1,258 +1,271 @@
-services:
-  config-service:
-    container_name: config-service
-    image: youssefbenarous247/config-service:latest
-    ports:
-      - "8888:8888"
-    networks:
-      - microservices-net
-  discovery-service:
-    container_name: discovery-service
-    image: youssefbenarous247/discovery-service:latest
-    environment:
-      - Config-Server=config-service
-    depends_on:
-      - config-service
-    ports:
-      - "8761:8761"
-    networks:
-      - microservices-net
-  gateway-service:
-    container_name: gateway-service
-    image: youssefbenarous247/gateway-service:latest
-    environment:
-      - Config-Server=config-service
-    depends_on:
-      - config-service
-    ports:
-      - "8222:8222"
-    networks:
-      - microservices-net
-  inventory-service:
-    container_name: inventory-service
-    image: youssefbenarous247/inventory-service:latest
-    environment:
-      - Config-Server=config-service
-    depends_on:
-      - config-service
-      - inventory-mysql
-    ports:
-      - "8083:8083"
-    networks:
-      - microservices-net
-  mailer-service:
-    container_name: mailer-service
-    image: youssefbenarous247/mailer-service:latest
-    environment:
-      - Config-Server=config-service
-    depends_on:
-      - config-service
-      - mailer-sql
-    ports:
-      - "8085:8085"
-    networks:
-      - microservices-net
-  order-service:
-    container_name: order-service
-    image: youssefbenarous247/order-service:latest
-    environment:
-      - Config-Server=config-service
-    depends_on:
-      - config-service
-      - order-mysql
-    ports:
-      - "8082:8082"
-    networks:
-      - microservices-net
-  product-service:
-    container_name: product-service
-    image: youssefbenarous247/product-service:latest
-    environment:
-      - Config-Server=config-service
-    depends_on:
-      - config-service
-      - elasticsearch
-      - produit-mongo
-      - produit-redis
-    ports:
-      - "8081:8081"
-    networks:
-      - microservices-net
-  user-service:
-    container_name: user-service
-    image: youssefbenarous247/user-service:latest
-    environment:
-      - Config-Server=config-service
-    depends_on:
-      - config-service
-      - user-mysql
-      - keycloak
-    ports:
-      - "8084:8084"
-    networks:
-      - microservices-net
-  zipkin:
-    container_name: zipkin
-    image: openzipkin/zipkin
-    ports:
-      - "9411:9411"
-    networks:
-      - microservices-net
-  mailer-sql:
-    image: mysql:8
-    container_name: mailer-mysql
-    ports:
-      - "3307:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: mailer-service
-    volumes:
-      - mailer-mysql:/data
-    networks:
-      - microservices-net
-  inventory-mysql:
-    image: mysql:8
-    container_name: inventory-mysql
-    ports:
-      - "3308:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: inventory-service
-    volumes:
-      - inventory-mysql:/data
-    networks:
-      - microservices-net
-  order-mysql:
-    image: mysql:8
-    container_name: order-mysql
-    ports:
-      - "3309:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: order-service
-    volumes:
-      - order-mysql:/data
-    networks:
-      - microservices-net
-  user-mysql:
-    image: mysql:8
-    container_name: user-mysql
-    ports:
-      - "3310:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: user-service
-    volumes:
-      - user-mysql:/data
-    networks:
-      - microservices-net
-  produit-mongo:
-    image: mongo
-    container_name: produit-mongo
-    ports:
-      - 27017:27017
-    volumes:
-      - produit-mongo:/data
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=admin
-    networks:
-      - microservices-net
-  produit-redis:
-    image: redis:7
-    container_name: produit-redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - produit-redis:/data
-    networks:
-      - microservices-net
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    volumes:
-      - rabbitmq:/data
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    networks:
-      - microservices-net
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.27
-    container_name: elasticsearch
-    ports:
-      - "9200:9200"
-    environment:
-      - cluster.name=es-cluster-produits
-      - xpack.security.enabled=false
-      - discovery.type=single-node
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - elasticsearch-data:/data
-    networks:
-      - microservices-net
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.17.27
-    container_name: kibana
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    ports:
-      - "5601:5601"
-    depends_on:
-      - elasticsearch
-    networks:
-      - microservices-net
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.17.27
-    container_name: logstash
-    ports:
-      - "5044:5044"
-      - "5000:5000"
-    volumes:
-      - ../logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
-    depends_on:
-      - elasticsearch
-    networks:
-      - microservices-net
-  keycloak:
-    container_name: keycloak
-    image: quay.io/keycloak/keycloak:21.1.1
-    environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-    volumes:
-      - keycloack-data:/data
-    ports:
-      - "9090:8080"
-    command:
-      - "start-dev"
-  jenkins:
-    image: jenkins/jenkins:lts
-    container_name: jenkins
-    privileged: true
-    user: root
-    ports:
-      - 8080:8080
-      - 50000:50000
-networks:
-  microservices-net:
-    driver: bridge
-
-volumes:
-  sql:
-  pgadmin:
-  produit-mongo:
-  produit-redis:
-  rabbitmq:
-  mailer-mysql:
-  inventory-mysql:
-  order-mysql:
-  user-mysql:
-  elasticsearch-data:
-  keycloack-data:
+  services:
+    config-service:
+      container_name: config-service
+      image: config-service:latest
+      environment:
+        - DISCOVERY_SERVICE=http://discovery-service:8761/eureka/
+      ports:
+        - "8888:8888"
+      networks:
+        - microservices-net
+      restart: on-failure:1
+      healthcheck:
+        test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
+        interval: 10s
+        retries: 10
+    discovery-service:
+      container_name: discovery-service
+      image: discovery-service:latest
+      environment:
+        - DISCOVERY_SERVICE=discovery-service
+        - CONFIG_SERVER_HOST=config-service
+      ports:
+        - "8761:8761"
+      networks:
+        - microservices-net
+      restart: on-failure:1
+      healthcheck:
+        test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
+        interval: 10s
+        retries: 10
+      depends_on:
+        config-service:
+          condition: service_healthy
+    gateway-service:
+      container_name: gateway-service
+      image: gateway-service:latest
+      environment:
+        - CONFIG_SERVER_HOST=config-service
+        - DISCOVERY_SERVICE=http://discovery-service:8761/eureka/
+      depends_on:
+        discovery-service:
+          condition: service_healthy
+      ports:
+        - "8222:8222"
+      networks:
+        - microservices-net
+      restart: on-failure:1
+    mailer-service:
+      container_name: mailer-service
+      image: mailer-service:latest
+      environment:
+        - CONFIG_SERVER_HOST=config-service
+        - Mailer_MYSQL=mailer-sql
+        - MAILER_MYSQL_PORT=3306
+        - DISCOVERY_SERVICE=http://discovery-service:8761/eureka/
+      depends_on:
+        discovery-service:
+          condition: service_healthy
+      ports:
+        - "8085:8085"
+      networks:
+        - microservices-net
+      restart: on-failure:1
+    inventory-service:
+      container_name: inventory-service
+      image: inventory-service:latest
+      environment:
+        - CONFIG_SERVER_HOST=config-service
+        - INVENTORY_MYSQL=inventory-mysql
+        - INVENTORY_MYSQL_PORT=3306
+        - DISCOVERY_SERVICE=http://discovery-service:8761/eureka/
+      depends_on:
+        discovery-service:
+          condition: service_healthy
+        #inventory-mysql:
+         # condition: service_healthy
+      ports:
+        - "8083:8083"
+      networks:
+        - microservices-net
+      restart: on-failure:1
+    order-service:
+      container_name: order-service
+      image: order-service:latest
+      environment:
+        - CONFIG_SERVER_HOST=config-service
+        - ORDER_MYSQL=order-mysql
+        - ORDER_MYSQL_PORT=3306
+        - DISCOVERY_SERVICE=http://discovery-service:8761/eureka/
+      depends_on:
+        discovery-service:
+          condition: service_healthy
+        #order-mysql:
+         # condition: service_healthy
+      ports:
+        - "8082:8082"
+      networks:
+        - microservices-net
+      restart: on-failure:1
+    product-service:
+      container_name: product-service
+      image: product-service:latest
+      environment:
+        - CONFIG_SERVER_HOST=config-service
+        - PRODUCT_MONGO=produit-mongo
+        - PRODUCT_ELASTIC=http://elasticsearch-service:9200
+        - PRODUCT_REDIS=produit-redis
+        #- SPRING_DATA_MONGODB=produit-mongo
+        - DISCOVERY_SERVICE=http://discovery-service:8761/eureka/
+        #- SPRING_ELASTICSEARCH_URI=http://elasticsearch-service:9200
+      depends_on:
+        elasticsearch-service:
+          condition: service_healthy
+        discovery-service:
+          condition: service_healthy
+      ports:
+        - "8081:8081"
+      networks:
+        - microservices-net
+      restart: on-failure:1
+    kibana:
+      image: docker.elastic.co/kibana/kibana:7.17.27
+      container_name: kibana
+      environment:
+        - ELASTICSEARCH_HOSTS=http://elasticsearch-service:9200
+        - ELASTIC_PASSWORD=786919
+      ports:
+        - "5601:5601"
+      depends_on:
+        - elasticsearch-service
+      networks:
+        - microservices-net
+    user-service:
+      container_name: user-service
+      image: user-service:latest
+      environment:
+        - CONFIG_SERVER_HOST=config-service
+        - USER_MYSQL=user-mysql
+        - USER_MYSQL_PORT=3306
+        - DISCOVERY_SERVICE=http://discovery-service:8761/eureka/
+      depends_on:
+        discovery-service:
+          condition: service_healthy
+        #- user-mysql
+  #      - keycloak
+      ports:
+        - "8084:8084"
+      networks:
+        - microservices-net
+      restart: on-failure:1
+    mailer-sql:
+      image: mysql:8
+      container_name: mailer-mysql
+      ports:
+        - "3307:3306"
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: mailer-service
+      volumes:
+        - mailer-mysql:/data
+      networks:
+        - microservices-net
+    inventory-mysql:
+      image: mysql:8
+      container_name: inventory-mysql
+      ports:
+        - "3308:3306"
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: inventory-service
+      volumes:
+        - inventory-mysql:/data
+      networks:
+        - microservices-net
+    order-mysql:
+      image: mysql:8
+      container_name: order-mysql
+      ports:
+        - "3309:3306"
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: order-service
+      volumes:
+        - order-mysql:/data
+      networks:
+        - microservices-net
+    user-mysql:
+      image: mysql:8
+      container_name: user-mysql
+      ports:
+        - "3310:3306"
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: user-service
+      volumes:
+        - user-mysql:/data
+      networks:
+        - microservices-net
+    produit-mongo:
+      image: mongo
+      container_name: produit-mongo
+      environment:
+        - MONGO_INITDB_ROOT_USERNAME=admin
+        - MONGO_INITDB_ROOT_PASSWORD=admin
+      ports:
+        - 27017:27017
+      volumes:
+        - produit-mongo:/data
+      networks:
+        - microservices-net
+    produit-redis:
+      image: redis:7
+      container_name: produit-redis
+      ports:
+        - "6379:6379"
+      volumes:
+        - produit-redis:/data
+      networks:
+        - microservices-net
+    rabbitmq:
+      image: rabbitmq:3-management
+      container_name: rabbitmq
+      environment:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest
+      volumes:
+        - rabbitmq:/data
+      ports:
+        - "5672:5672"
+        - "15672:15672"
+      networks:
+        - microservices-net
+    elasticsearch-service:
+      image: elasticsearch-service:latest
+      container_name: elasticsearch-service
+      ports:
+        - "9200:9200"
+        - '9300:9300'
+      environment:
+        - xpack.security.enabled=false
+      #  - ELASTIC_PASSWORD=786919
+      #  - xpack.security.authc.api_key.enabled=true
+        - discovery.type=single-node
+        - network.host=0.0.0.0
+        - cluster-nodes:9300
+        - ES_JAVA_OPTS=-Xms512m -Xmx512m
+        - xpack.security.http.ssl.enabled=false
+      volumes:
+        - elasticsearch-data:/data
+      networks:
+        - microservices-net
+      healthcheck:
+        test: curl -s -f elasticsearch-service:9200/_cat/health >/dev/null || exit 1
+        interval: 30s
+        timeout: 10s
+        retries: 5
+  networks:
+    microservices-net:
+      driver: bridge
+  volumes:
+    sql:
+    pgadmin:
+    produit-mongo:
+    produit-redis:
+    rabbitmq:
+    mailer-mysql:
+    inventory-mysql:
+    order-mysql:
+    user-mysql:
+    elasticsearch-data:
+  #  keycloack-data:

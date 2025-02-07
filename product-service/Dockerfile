@@ -7,7 +7,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 FROM openjdk:17-jdk-alpine
-
+RUN apk update && apk add curl
 WORKDIR /app
 
 COPY --from=build /app/target/product-service-0.0.1-SNAPSHOT.jar app.jar
