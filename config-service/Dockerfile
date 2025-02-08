@@ -6,8 +6,8 @@ COPY pom.xml .
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-FROM openjdk:17-jdk-alpine
-RUN apk update && apk add curl
+FROM openjdk:17-slim
+RUN apt update && apt install -y curl
 WORKDIR /app
 
 COPY --from=build /app/target/config-service-0.0.1-SNAPSHOT.jar app.jar
