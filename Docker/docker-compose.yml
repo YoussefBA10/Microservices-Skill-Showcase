@@ -98,8 +98,8 @@
         - microservices-net
       restart: on-failure:1
     product-service:
-      container_name: youssefbenarous247/product-service
-      image: product-service:latest
+      container_name: product-service
+      image: youssefbenarous247/product-service:latest
       environment:
         - CONFIG_SERVER_HOST=config-service
         - PRODUCT_MONGO=produit-mongo
