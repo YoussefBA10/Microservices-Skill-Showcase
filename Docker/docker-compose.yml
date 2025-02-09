@@ -1,7 +1,7 @@
   services:
     config-service:
       container_name: config-service
-      image: config-service:latest
+      image: youssefbenarous247/config-service:latest
       environment:
         - DISCOVERY_SERVICE=http://discovery-service:8761/eureka/
       ports:
@@ -15,7 +15,7 @@
         retries: 10
     discovery-service:
       container_name: discovery-service
-      image: discovery-service:latest
+      image: youssefbenarous247/discovery-service:latest
       environment:
         - DISCOVERY_SERVICE=discovery-service
         - CONFIG_SERVER_HOST=config-service
@@ -33,7 +33,7 @@
           condition: service_healthy
     gateway-service:
       container_name: gateway-service
-      image: gateway-service:latest
+      image: youssefbenarous247/gateway-service:latest
       environment:
         - CONFIG_SERVER_HOST=config-service
         - DISCOVERY_SERVICE=http://discovery-service:8761/eureka/
@@ -47,7 +47,7 @@
       restart: on-failure:1
     mailer-service:
       container_name: mailer-service
-      image: mailer-service:latest
+      image: youssefbenarous247/mailer-service:latest
       environment:
         - CONFIG_SERVER_HOST=config-service
         - Mailer_MYSQL=mailer-sql
@@ -63,7 +63,7 @@
       restart: on-failure:1
     inventory-service:
       container_name: inventory-service
-      image: inventory-service:latest
+      image: youssefbenarous247/inventory-service:latest
       environment:
         - CONFIG_SERVER_HOST=config-service
         - INVENTORY_MYSQL=inventory-mysql
@@ -81,7 +81,7 @@
       restart: on-failure:1
     order-service:
       container_name: order-service
-      image: order-service:latest
+      image: youssefbenarous247/order-service:latest
       environment:
         - CONFIG_SERVER_HOST=config-service
         - ORDER_MYSQL=order-mysql
@@ -98,7 +98,7 @@
         - microservices-net
       restart: on-failure:1
     product-service:
-      container_name: product-service
+      container_name: youssefbenarous247/product-service
       image: product-service:latest
       environment:
         - CONFIG_SERVER_HOST=config-service
@@ -132,7 +132,7 @@
         - microservices-net
     user-service:
       container_name: user-service
-      image: user-service:latest
+      image: youssefbenarous247/user-service:latest
       environment:
         - CONFIG_SERVER_HOST=config-service
         - USER_MYSQL=user-mysql
@@ -231,7 +231,7 @@
       networks:
         - microservices-net
     elasticsearch-service:
-      image: elasticsearch-service:latest
+      image: docker.elastic.co/elasticsearch/elasticsearch:7.17.27
       container_name: elasticsearch-service
       ports:
         - "9200:9200"
