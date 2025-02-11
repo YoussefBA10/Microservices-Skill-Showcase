@@ -146,5 +146,15 @@
             </snapshots>
         </repository>
     </repositories>
+    <distributionManagement>
+        <repository>
+            <id>maven-releases</id>
+            <url>http://192.168.139.137:9090/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven-snapshots</id>
+            <url>http://192.168.139.137:9090/repository/maven-releases/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>
