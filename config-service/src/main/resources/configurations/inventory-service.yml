@@ -1,4 +1,10 @@
 spring:
+  cloud:
+    kubernetes:
+      discovery:
+        enabled: true
+        all-namespaces: false
+
   datasource:
     url: jdbc:mysql://${INVENTORY_MYSQL:localhost}:${INVENTORY_MYSQL_PORT:3308}/inventory-service
     driver-class-name: com.mysql.cj.jdbc.Driver

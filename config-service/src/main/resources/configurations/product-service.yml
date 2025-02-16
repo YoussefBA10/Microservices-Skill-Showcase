@@ -1,4 +1,9 @@
 spring:
+  cloud:
+    kubernetes:
+      discovery:
+        enabled: true
+        all-namespaces: false
   main:
     allow-bean-definition-overriding: true
   data:

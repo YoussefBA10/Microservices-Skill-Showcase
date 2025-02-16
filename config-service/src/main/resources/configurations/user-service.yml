@@ -1,4 +1,9 @@
 spring:
+  cloud:
+    kubernetes:
+      discovery:
+        enabled: true
+        all-namespaces: false
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${USER_MYSQL:localhost}:${USER_MYSQL_PORT:3310}/user-service

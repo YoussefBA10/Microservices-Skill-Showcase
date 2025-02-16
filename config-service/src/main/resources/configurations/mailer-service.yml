@@ -1,4 +1,10 @@
 spring:
+  cloud:
+    kubernetes:
+      discovery:
+        enabled: true
+        all-namespaces: false
+
   datasource:
     url: jdbc:mysql://${Mailer_MYSQL:localhost}:${MAILER_MYSQL_PORT:3307}/mailer-service
     username: root

@@ -1,4 +1,9 @@
 spring:
+  cloud:
+    kubernetes:
+      discovery:
+        enabled: true
+        all-namespaces: false
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${ORDER_MYSQL:localhost}:${ORDER_MYSQL_PORT:3309}/order-service
