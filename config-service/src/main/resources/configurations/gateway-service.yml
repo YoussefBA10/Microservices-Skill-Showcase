@@ -1,6 +1,6 @@
 spring:
-  discovery:
-    enabled: true
+  config:
+    active
   security:
     oauth2:
       resourceserver:
@@ -20,23 +20,23 @@ spring:
           enabled: true
       routes:
         - id: order-service
-          uri: lb:http://ORDER-SERVICE
+          uri: http://ORDER-SERVICE
           predicates:
             - Path=/api/v1/order/**
         - id: inventory-service
-          uri: lb:http://INVENTORY-SERVICE
+          uri: http://INVENTORY-SERVICE
           predicates:
             - Path=/api/v1/inventory/**
         - id: mailer-service
-          uri: lb:http://MAILER-SERVICE
+          uri: http://MAILER-SERVICE
           predicates:
             - Path=/api/v1/mailer/**
         - id: product-service
-          uri: lb:http://PRODUCT-SERVICE
+          uri: http://PRODUCT-SERVICE
           predicates:
             - Path=/api/v1/product/**
         - id: user-service
-          uri: lb:http://USER-SERVICE
+          uri: http://USER-SERVICE
           predicates:
             - Path=/api/v1/auth/**
 logging:
@@ -56,12 +56,6 @@ resilience4j:
     configs:
       default:
         timeout-duration: 3s
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${DISCOVERY_SERVICE:http://localhost:8761/eureka/}
-  instance:
-    preferIpAddress: true
 
 
 

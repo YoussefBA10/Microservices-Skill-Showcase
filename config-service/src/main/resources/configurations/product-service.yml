@@ -1,6 +1,4 @@
 spring:
-  discovery:
-    enabled: true
   main:
     allow-bean-definition-overriding: true
   data:
@@ -37,9 +35,3 @@ resilience4j:
     configs:
       default:
         timeout-duration: 3s
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${DISCOVERY_SERVICE:http://localhost:8761/eureka/}
-  instance:
-    preferIpAddress: true

@@ -1,6 +1,4 @@
 spring:
-  discovery:
-    enabled: true
   datasource:
     url: jdbc:mysql://${Mailer_MYSQL:localhost}:${MAILER_MYSQL_PORT:3307}/mailer-service
     username: root
@@ -51,9 +49,3 @@ logging:
     root: DEBUG
     com.fasterxml.jackson: DEBUG
     org.springframework.security: DEBUG
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${DISCOVERY_SERVICE:http://localhost:8761/eureka/}
-  instance:
-    preferIpAddress: true

@@ -1,6 +1,4 @@
 spring:
-  discovery:
-    enabled: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${ORDER_MYSQL:localhost}:${ORDER_MYSQL_PORT:3309}/order-service
@@ -38,9 +36,3 @@ resilience4j:
     configs:
       default:
         timeout-duration: 3s
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${DISCOVERY_SERVICE:http://localhost:8761/eureka/}
-  instance:
-    preferIpAddress: true
