@@ -1,0 +1,71 @@
+spring:
+  config:
+    active
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "http://${keycloack:localhost}:9080/realms/micro-services"
+  main:
+    web-application-type: reactive
+  cloud:
+    kubernetes:
+      discovery:
+        enabled: true
+        all-namespaces: false
+    loadbalancer:
+      ribbon:
+        enabled: false
+      retry:
+        enabled: true
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: order-service
+          uri: http://ORDER-SERVICE
+          predicates:
+            - Path=/api/v1/order/**
+        - id: inventory-service
+          uri: http://INVENTORY-SERVICE
+          predicates:
+            - Path=/api/v1/inventory/**
+        - id: mailer-service
+          uri: http://MAILER-SERVICE
+          predicates:
+            - Path=/api/v1/mailer/**
+        - id: product-service
+          uri: http://PRODUCT-SERVICE
+          predicates:
+            - Path=/api/v1/product/**
+        - id: user-service
+          uri: http://USER-SERVICE
+          predicates:
+            - Path=/api/v1/auth/**
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+resilience4j:
+  configs:
+    default:
+      registerHealthIndicator: true
+      slidingWindowType: COUNT_BASED
+      slidingWindowSize: 10
+      failureRateThreshold: 50
+      waitDurationInOpenState: 5s
+      permittedNumberOfCallsInHalfOpenState: 3
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 3s
+
+
+
+
+
+
+
+
+
